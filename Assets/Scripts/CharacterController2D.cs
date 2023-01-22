@@ -66,6 +66,62 @@ public class CharacterController2D : MonoBehaviour
         set => jumpPadUpperLimit = value;
     }
 
+    [SerializeField] WallEffector leftWallEffector;
+    public WallEffector LeftWallEffector
+    {
+        get => leftWallEffector;
+        set => leftWallEffector = value;
+    }
+
+    [SerializeField] bool isLeftRunnable;
+    public bool IsLeftRunnable
+    {
+        get => isLeftRunnable;
+        set => isLeftRunnable = value;
+    }
+
+    [SerializeField] bool isLeftJumpable;
+    public bool IsLeftJumpable
+    {
+        get => isLeftJumpable;
+        set => isLeftJumpable = value;
+    }
+
+    [SerializeField] float leftSlideModifier;
+    public float LeftSlideModifier
+    {
+        get => leftSlideModifier;
+        set => leftSlideModifier = value;
+    }
+
+    [SerializeField] WallEffector rightWallEffector;
+    public WallEffector RightWallEffector
+    {
+        get => rightWallEffector;
+        set => rightWallEffector = value;
+    }
+
+    [SerializeField] bool isRightRunnable;
+    public bool IsRightRunnable
+    {
+        get => isRightRunnable;
+        set => isRightRunnable = value;
+    }
+
+    [SerializeField] bool isRightJumpable;
+    public bool IsRightJumpable
+    {
+        get => isRightJumpable;
+        set => isRightJumpable = value;
+    }
+
+    [SerializeField] float rightSlideModifier;
+    public float RightSlideModifier
+    {
+        get => rightSlideModifier;
+        set => rightSlideModifier = value;
+    }
+
     // flags
     bool _disableGroundCheck;
     bool _inAirLastFrame;
@@ -240,6 +296,15 @@ public class CharacterController2D : MonoBehaviour
         {
             leftWallType = DetermineWallType(leftHit.collider);
             _isLeftExist = true;
+
+            leftWallEffector = leftHit.collider.GetComponent<WallEffector>();
+
+            if (leftWallEffector)
+            {
+                isLeftRunnable = leftWallEffector.IsRunnable;
+                isLeftJumpable = leftWallEffector.IsJumpable;
+                leftSlideModifier = leftWallEffector.WallSlideAmount;
+            }
         }
         else
         {
@@ -255,6 +320,15 @@ public class CharacterController2D : MonoBehaviour
         {
             rightWallType = DetermineWallType(rightHit.collider);
             _isRightExist = true;
+
+            rightWallEffector = rightHit.collider.GetComponent<WallEffector>();
+
+            if (rightWallEffector)
+            {
+                isRightRunnable = rightWallEffector.IsRunnable;
+                isRightJumpable = rightWallEffector.IsJumpable;
+                rightSlideModifier = rightWallEffector.WallSlideAmount;
+            }
         }
         else
         {

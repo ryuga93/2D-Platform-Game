@@ -26,7 +26,7 @@ public class WallEffector : MonoBehaviour
         set => isJumpable = value;
     }
 
-    [SerializeField] float wallSlideAmount;
+    [SerializeField] float wallSlideAmount = 0.1f;
     public float WallSlideAmount
     {
         get => wallSlideAmount;
