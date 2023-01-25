@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float dashCooldownTime = 1f;
     [SerializeField] float groundSlamSpeed = 60f;
     [SerializeField] float deadzoneValue = 0.15f;
+    [SerializeField] float swimSpeed = 150f;
 
     [Header("Player States")]
     [SerializeField] bool isJumping;
@@ -41,6 +42,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool isPowerJumping;
     [SerializeField] bool isDashing;
     [SerializeField] bool isGroundSlamming;
+    [SerializeField] bool isSwimming;
 
     [Header("Player Abilities")]
     //abilities toggle flags
@@ -57,6 +59,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool canGroundDash;
     [SerializeField] bool canAirDash;
     [SerializeField] bool canGroundSlam;
+    [SerializeField] bool canSwim;
 
     //input flags
     bool _startJump;
@@ -110,6 +113,10 @@ public class PlayerController : MonoBehaviour
         if (_characterController.IsBelowExist)
         {
             OnGround();
+        }
+        else if (_characterController.IsInWater)
+        {
+            InWater();
         }
         else // In the air
         {
@@ -305,7 +312,38 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void ClearAirAbilitiesFlags()
+    void InWater()
+    {
+        ClearGroundAbilityFlags();
+        AirJump();
+
+        if (_input.y != 0f && canSwim && !_isHoldJump)
+        {
+            if (_input.y > 0 && !_characterController.IsSubmerged)
+            {
+                _moveDirection.y = 0f;
+            }
+            else
+            {
+                _moveDirection.y = (_input.y * swimSpeed) * Time.deltaTime;
+            }
+        }
+        else if (_moveDirection.y < 0f && _input.y == 0f)
+        {
+            _moveDirection.y += 2f;
+        }
+
+        if (_characterController.IsSubmerged && canSwim)
+        {
+            isSwimming = true;
+        }
+        else
+        {
+            isSwimming = false;
+        }
+    }
+
+    void ClearAirAbilitiesFlags()
     {
         isJumping = false;
         isDoubleJumping = false;
@@ -410,6 +448,14 @@ public class PlayerController : MonoBehaviour
                     _moveDirection.y = doubleJumpSpeed;
                     isDoubleJumping = true;
                 }
+            }
+
+            // Jump in water
+            if (_characterController.IsInWater)
+            {
+                isDoubleJumping = false;
+                isTripleJumping = false;
+                _moveDirection.y = jumpSpeed;
             }
 
             // Wall Jump

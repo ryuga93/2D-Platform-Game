@@ -9,6 +9,21 @@ public class CharacterController2D : MonoBehaviour
     [SerializeField] float slopeAngle;
     [SerializeField] float slopeAngleLimit = 45f;
     [SerializeField] float downForceAdjustment = 1.2f;
+    [SerializeField] float waterForce = 250f;
+
+    [SerializeField] bool isSubmerged;
+    public bool IsSubmerged
+    {
+        get => isSubmerged;
+        set => isSubmerged = value;
+    }
+
+    [SerializeField] bool isInWater;
+    public bool IsInWater
+    {
+        get => isInWater;
+        set => isInWater = false;
+    }
 
     [SerializeField] float raycastDistance = 0.2f;
     public float RaycastDistance
@@ -200,9 +215,19 @@ public class CharacterController2D : MonoBehaviour
             }
         }
 
-        _currentPosition = _lastPosition + _moveAmount;
+        if (!isInWater)
+        {
+            _currentPosition = _lastPosition + _moveAmount;
+            _rigidbody.MovePosition(_currentPosition);
+        }
+        else
+        {
+            if (_rigidbody.velocity.magnitude < 10f)
+            {
+                _rigidbody.AddForce(_moveAmount * waterForce);
+            }
+        }
 
-        _rigidbody.MovePosition(_currentPosition);
         _moveAmount = Vector2.zero;
 
         if (!_disableGroundCheck)
@@ -485,5 +510,34 @@ public class CharacterController2D : MonoBehaviour
         {
             _tempMovingPlatform = null;
         }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.GetComponent<BuoyancyEffector2D>())
+        {
+            isInWater = true;
+        }
+    }
+
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.bounds.Contains(_capsuleCollider.bounds.min) && other.bounds.Contains(_capsuleCollider.bounds.max) && other.gameObject.GetComponent<BuoyancyEffector2D>())
+        {
+            isSubmerged = true;
+        }
+        else
+        {
+            isSubmerged = false;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.GetComponent<BuoyancyEffector2D>())
+        {
+            _rigidbody.velocity = Vector2.zero;
+            isInWater = false;
+        }   
     }
 }
