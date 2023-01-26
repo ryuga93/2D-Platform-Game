@@ -137,6 +137,34 @@ public class CharacterController2D : MonoBehaviour
         set => rightSlideModifier = value;
     }
 
+    [SerializeField] bool isInAirEffector;
+    public bool IsInAirEffector
+    {
+        get => isInAirEffector;
+        set => isInAirEffector = value;
+    }
+    
+    [SerializeField] AirEffectorType airEffectorType;
+    public AirEffectorType AirEffectorType
+    {
+        get => airEffectorType;
+        set => airEffectorType = value;
+    }
+
+    [SerializeField] float airEffectorSpeed;
+    public float AirEffectorSpeed
+    {
+        get => airEffectorSpeed;
+        set => airEffectorSpeed = value;
+    }
+
+    [SerializeField] Vector2 airEffectorDirection;
+    public Vector2 AirEffectorDirection
+    {
+        get => airEffectorDirection;
+        set => airEffectorDirection = value;
+    }
+
     // flags
     bool _disableGroundCheck;
     bool _inAirLastFrame;
@@ -166,6 +194,8 @@ public class CharacterController2D : MonoBehaviour
 
     Transform _tempMovingPlatform;
     Vector2 _movingPlatformVelocity;
+
+    AirEffector _airEffector;
 
     // Start is called before the first frame update
     void Start()
@@ -518,6 +548,16 @@ public class CharacterController2D : MonoBehaviour
         {
             isInWater = true;
         }
+
+        if (other.gameObject.GetComponent<AirEffector>())
+        {
+            isInAirEffector = true;
+            _airEffector = other.gameObject.GetComponent<AirEffector>();
+
+            airEffectorType = _airEffector.AirEffectorType;
+            airEffectorSpeed = _airEffector.Speed;
+            airEffectorDirection = _airEffector.Direction;
+        }
     }
 
     void OnTriggerStay2D(Collider2D other)
@@ -532,12 +572,29 @@ public class CharacterController2D : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit2D(Collider2D other)
+    void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.GetComponent<BuoyancyEffector2D>())
         {
             _rigidbody.velocity = Vector2.zero;
             isInWater = false;
-        }   
+        }
+
+        if (other.gameObject.GetComponent<AirEffector>())
+        {
+            isInAirEffector = false;
+            _airEffector = null;
+            airEffectorType = AirEffectorType.None;
+            airEffectorSpeed = 0f;
+            airEffectorDirection = Vector2.zero;
+        }
+    }
+
+    public void DeactivateAirEffector()
+    {
+        if (_airEffector)
+        {
+            _airEffector.DeactivateEffector();
+        }
     }
 }
