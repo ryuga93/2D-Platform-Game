@@ -355,6 +355,24 @@ public class PlayerController : MonoBehaviour
                 _moveDirection.y = Mathf.Lerp(_moveDirection.y, 0f, Time.deltaTime * 4f);
             }
         }
+
+        // Process movement when in an updraft
+        if (_characterController.AirEffectorType == AirEffectorType.Updraft)
+        {
+            if (_input.y <= 0f)
+            {
+                isGliding = false;
+            }
+            
+            if (isGliding)
+            {
+                _moveDirection.y = _characterController.AirEffectorSpeed;
+            }
+            else
+            {
+                InAir();
+            }
+        }
     }
 
     void InWater()
@@ -398,6 +416,7 @@ public class PlayerController : MonoBehaviour
         isGroundSlamming = false;
         _startGlide = true;
         _currentGlideTime = glideTime;
+        isGliding = false;
     }
 
     void InAir()
@@ -409,6 +428,11 @@ public class PlayerController : MonoBehaviour
         WallRun();
 
         CalculateGravity();
+
+        if (isGliding && _input.y <= 0f)
+        {
+            isGliding = false;
+        }
     }
 
     private void WallRun()
