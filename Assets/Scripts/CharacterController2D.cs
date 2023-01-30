@@ -245,6 +245,13 @@ public class CharacterController2D : MonoBehaviour
             }
         }
 
+        // Tractor Beam adjustment
+        if (_airEffector && airEffectorType == AirEffectorType.TractorBeam)
+        {
+            Vector2 airEffectorVector = airEffectorDirection * airEffectorSpeed;
+            _moveAmount = Vector2.Lerp(_moveAmount, airEffectorVector, Time.deltaTime);
+        }
+
         if (!isInWater)
         {
             _currentPosition = _lastPosition + _moveAmount;
@@ -583,6 +590,7 @@ public class CharacterController2D : MonoBehaviour
         if (other.gameObject.GetComponent<AirEffector>())
         {
             isInAirEffector = false;
+            _airEffector.DeactivateEffector();
             _airEffector = null;
             airEffectorType = AirEffectorType.None;
             airEffectorSpeed = 0f;

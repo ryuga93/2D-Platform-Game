@@ -346,6 +346,15 @@ public class PlayerController : MonoBehaviour
                 _moveDirection.y = 0f;
             }
         }
+
+        // Process movement when in tractor beam
+        if (_characterController.AirEffectorType == AirEffectorType.TractorBeam)
+        {
+            if (_moveDirection.y != 0f)
+            {
+                _moveDirection.y = Mathf.Lerp(_moveDirection.y, 0f, Time.deltaTime * 4f);
+            }
+        }
     }
 
     void InWater()
