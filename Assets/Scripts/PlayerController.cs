@@ -88,6 +88,10 @@ public class PlayerController : MonoBehaviour
     float _jumpPadAdjustment = 0f;
     Vector2 _tempVelocity;
 
+    public Vector2 MoveDirection => _moveDirection;
+    public bool IsGliding => isGliding;
+    public bool IsDucking => isDucking;
+
     // Start is called before the first frame update
     void Start()
     {
