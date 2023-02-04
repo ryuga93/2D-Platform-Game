@@ -258,7 +258,8 @@ public class PlayerController : MonoBehaviour
             if (!isDucking && !isCreeping)
             {
                 _capsuleCollider.size = new Vector2(_capsuleCollider.size.x, _capsuleCollider.size.y / 2);
-                transform.position = new Vector2(transform.position.x, transform.position.y - _originalColliderSize.y / 4);
+                _capsuleCollider.offset = new Vector2(0f, -_capsuleCollider.size.y / 2);
+                //transform.position = new Vector2(transform.position.x, transform.position.y - _originalColliderSize.y / 4);
                 _spriteRenderer.sprite = Resources.Load<Sprite>("directionSpriteUp_crouching");
                 isDucking = true;
             }
@@ -276,7 +277,8 @@ public class PlayerController : MonoBehaviour
                 if (!hitCeiling.collider)
                 {
                     _capsuleCollider.size = _originalColliderSize;
-                    transform.position = new Vector2(transform.position.x, transform.position.y + _originalColliderSize.y / 4);
+                    _capsuleCollider.offset = new Vector2(0f, 0f);
+                    //transform.position = new Vector2(transform.position.x, transform.position.y + _originalColliderSize.y / 4);
                     _spriteRenderer.sprite = Resources.Load<Sprite>("directionSpriteUp");
                     isDucking = false;
                     isCreeping = false;
