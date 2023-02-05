@@ -28,14 +28,10 @@ public class PlayerAnimationController : MonoBehaviour
         _animator.SetFloat("horizontalMovement", Mathf.Abs(_playerController.MoveDirection.x));
         _animator.SetFloat("verticalMovement", _playerController.MoveDirection.y);
 
-        if (_characterController.IsBelowExist)
-        {
-            _animator.SetBool("isGrounded", true);
-        }
-        else
-        {
-            _animator.SetBool("isGrounded", false);
-        }
+        _animator.SetBool("isGrounded", _characterController.IsBelowExist);
+        _animator.SetBool("isGliding", _playerController.IsGliding);
+        _animator.SetBool("isCrouching", _playerController.IsDucking);
+        _animator.SetBool("isInWater", _characterController.IsSubmerged);
 
         if ((_characterController.IsLeftExist || _characterController.IsRightExist) && !_characterController.IsBelowExist)
         {
@@ -44,33 +40,6 @@ public class PlayerAnimationController : MonoBehaviour
         else
         {
             _animator.SetBool("isOnWall", false);
-        }
-
-        if (_playerController.IsGliding)
-        {
-            _animator.SetBool("isGliding", true);
-        }
-        else
-        {
-            _animator.SetBool("isGliding", false);
-        }
-
-        if (_playerController.IsDucking)
-        {
-            _animator.SetBool("isCrouching", true);
-        }
-        else
-        {
-            _animator.SetBool("isCrouching", false);
-        }
-
-        if (_characterController.IsSubmerged)
-        {
-            _animator.SetBool("isInWater", true);
-        }
-        else
-        {
-            _animator.SetBool("isInWater", false);
         }
     }
 

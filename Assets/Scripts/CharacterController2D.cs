@@ -569,9 +569,18 @@ public class CharacterController2D : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D other)
     {
-        if (other.bounds.Contains(_capsuleCollider.bounds.min) && other.bounds.Contains(_capsuleCollider.bounds.max) && other.gameObject.GetComponent<BuoyancyEffector2D>())
+        /*if (other.bounds.Contains(_capsuleCollider.bounds.min) && other.bounds.Contains(_capsuleCollider.bounds.max) && other.gameObject.GetComponent<BuoyancyEffector2D>())
         {
             isSubmerged = true;
+        }
+        else
+        {
+            isSubmerged = false;
+        } */
+
+        if (other.bounds.Contains(_capsuleCollider.bounds.center) && other.gameObject.GetComponent<BuoyancyEffector2D>())
+        {
+            isSubmerged = true; 
         }
         else
         {
