@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerAnimationController : MonoBehaviour
 {
@@ -14,6 +15,11 @@ public class PlayerAnimationController : MonoBehaviour
         _playerController = GetComponent<PlayerController>();
         _characterController = GetComponent<CharacterController2D>();
         _animator = GetComponentInChildren<Animator>();
+
+        _playerController.OnDoubleJump += PlayDoubleJump;
+        _playerController.OnPowerJump += PlayPowerJump;
+        _playerController.OnStomp += PlayStomp;
+        _playerController.OnStartDash += PlayDash;
     }
 
     // Update is called once per frame
@@ -66,5 +72,26 @@ public class PlayerAnimationController : MonoBehaviour
         {
             _animator.SetBool("isInWater", false);
         }
+    }
+
+    void PlayDoubleJump(object sender, EventArgs e)
+    {
+        // _animator.Play("doubleJump");
+        _animator.SetTrigger("doubleJump");
+    }
+
+    void PlayPowerJump(object sender, EventArgs e)
+    {
+        _animator.Play("powerJump");
+    }
+
+    void PlayStomp(object sender, EventArgs e)
+    {
+        _animator.Play("stomp");
+    }
+
+    void PlayDash(object sender, EventArgs e)
+    {
+        _animator.Play("slide");
     }
 }

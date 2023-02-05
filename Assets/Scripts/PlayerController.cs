@@ -73,7 +73,7 @@ public class PlayerController : MonoBehaviour
 
     CapsuleCollider2D _capsuleCollider;
     Vector2 _originalColliderSize;
-    // Rmove when not needed
+    // Remove when not needed
     SpriteRenderer _spriteRenderer;
 
     float _currentGlideTime;
@@ -91,6 +91,12 @@ public class PlayerController : MonoBehaviour
     public Vector2 MoveDirection => _moveDirection;
     public bool IsGliding => isGliding;
     public bool IsDucking => isDucking;
+
+    // Events
+    public event EventHandler OnDoubleJump;
+    public event EventHandler OnPowerJump;
+    public event EventHandler OnStomp;
+    public event EventHandler OnStartDash;
 
     // Start is called before the first frame update
     void Start()
@@ -307,6 +313,7 @@ public class PlayerController : MonoBehaviour
 
             if (canPowerJump && isDucking && _characterController.GroundType != GroundType.OneWayPlatform && _powerJumpTimer > powerJumpWaitTime)
             {
+                OnPowerJump?.Invoke(this, EventArgs.Empty);
                 _moveDirection.y = powerJumpSpeed;
                 StartCoroutine(PowerJumpWaiter());
             }
@@ -510,6 +517,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (isDoubleJumping && !isTripleJumping)
                 {
+                    OnDoubleJump?.Invoke(this, EventArgs.Empty);
                     _moveDirection.y = doubleJumpSpeed;
                     isTripleJumping = true;
                 }
@@ -520,6 +528,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (!isDoubleJumping)
                 {
+                    OnDoubleJump?.Invoke(this, EventArgs.Empty);
                     _moveDirection.y = doubleJumpSpeed;
                     isDoubleJumping = true;
                 }
@@ -653,6 +662,7 @@ public class PlayerController : MonoBehaviour
         //else if (canGroundSlam && !isPowerJumping && _input.y < 0f && _moveDirection.y < 0f) // Ground slam
         else if (isGroundSlamming && !isPowerJumping && _moveDirection.y < 0f)
         {
+            OnStomp?.Invoke(this, EventArgs.Empty);
             _moveDirection.y = -groundSlamSpeed;
         }
         else if (!isDashing) // Regular gravity
@@ -738,6 +748,7 @@ public class PlayerController : MonoBehaviour
         if (!hitCeiling.collider)
         {
             _capsuleCollider.size = _originalColliderSize;
+            _capsuleCollider.offset = new Vector2(0f, 0f);
             // transform.position = new Vector2(transform.position.x, transform.position.y + _originalColliderSize.y / 4);
             _spriteRenderer.sprite = Resources.Load<Sprite>("directionSpriteUp");
             isDucking = false;
@@ -755,6 +766,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Dash()
     {
+        OnStartDash?.Invoke(this, EventArgs.Empty);
         isDashing = true;
         yield return new WaitForSeconds(dashTime);
 
