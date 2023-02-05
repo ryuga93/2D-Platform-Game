@@ -453,6 +453,8 @@ public class PlayerController : MonoBehaviour
         // Wall Run
         if (canWallRun && (_characterController.IsLeftExist || _characterController.IsRightExist))
         {
+            isGliding = false;
+            
             if (_characterController.IsLeftExist && _characterController.LeftWallEffector && !_characterController.IsLeftRunnable)
             {
                 return;
