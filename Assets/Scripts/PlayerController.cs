@@ -81,8 +81,6 @@ public class PlayerController : MonoBehaviour
     bool _startGlide;
 
     float _powerJumpTimer;
-
-    bool _facingRight;
     float _dashTimer;
 
     float _jumpPadAmount = 15f;
@@ -169,17 +167,15 @@ public class PlayerController : MonoBehaviour
             if (_moveDirection.x < 0)
             {
                 transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-                _facingRight = false;
             }
             else if (_moveDirection.x > 0)
             {
                 transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-                _facingRight = true;
             }
 
             if (isDashing)
             {
-                if (_facingRight)
+                if (transform.rotation.y == 0)
                 {
                     _moveDirection.x = dashSpeed;
                 }
@@ -457,11 +453,14 @@ public class PlayerController : MonoBehaviour
 
     private void WallRun()
     {
+        if (_characterController.HitWallThisFrame)
+        {
+            ClearAirAbilitiesFlags();
+        }
         // Wall Run
         if (canWallRun && (_characterController.IsLeftExist || _characterController.IsRightExist))
         {
-            isGliding = false;
-            
+            // isGliding = false;
             if (_characterController.IsLeftExist && _characterController.LeftWallEffector && !_characterController.IsLeftRunnable)
             {
                 return;
