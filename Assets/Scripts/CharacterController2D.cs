@@ -5,67 +5,23 @@ using GlobalTypes;
 
 public class CharacterController2D : MonoBehaviour
 {
-    [SerializeField] Vector2 slopeNormal;
-    [SerializeField] float slopeAngle;
+    [Header("General Settings")]
     [SerializeField] float slopeAngleLimit = 45f;
     [SerializeField] float downForceAdjustment = 1.2f;
     [SerializeField] float waterForce = 250f;
-
-    [SerializeField] bool isSubmerged;
-    public bool IsSubmerged
-    {
-        get => isSubmerged;
-        set => isSubmerged = value;
-    }
-
-    [SerializeField] bool isInWater;
-    public bool IsInWater
-    {
-        get => isInWater;
-        set => isInWater = false;
-    }
-
     [SerializeField] float raycastDistance = 0.2f;
-    public float RaycastDistance
-    {
-        get => raycastDistance;
-        set => raycastDistance = value;
-    }
-
     [SerializeField] LayerMask layerMask;
-    public LayerMask LayerMask
-    {
-        get => layerMask;
-        set => layerMask = value;
-    }
+    
+    [Header("In Water Information")]
+    [SerializeField] bool isSubmerged;
+    [SerializeField] bool isInWater;
 
+    [Header("Collision Type Information")]
     [SerializeField] GroundType groundType;
-    public GroundType GroundType
-    {
-        get => groundType;
-        set => groundType = value;
-    }
-
     [SerializeField] WallType leftWallType;
-    public WallType LeftWallType
-    {
-        get => leftWallType;
-        set => leftWallType = value;
-    }
-
     [SerializeField] WallType rightWallType;
-    public WallType RightWallType
-    {
-        get => rightWallType;
-        set => rightWallType = value;
-    }
-
     [SerializeField] GroundType ceilingType;
-    public GroundType CeilingType
-    {
-        get => ceilingType;
-        set => ceilingType = value;
-    }
+    
 
     [SerializeField] float jumpPadAmount;
     public float JumpPadAmount
@@ -182,6 +138,10 @@ public class CharacterController2D : MonoBehaviour
     public bool HitGroundThisFrame => _hitGroundThisFrame;
     public bool HitWallThisFrame => _hitWallThisFrame;
 
+
+    Vector2 slopeNormal;
+    float slopeAngle;
+
     Vector2 _moveAmount;
     Vector2 _currentPosition;
     Vector2 _lastPosition;
@@ -196,6 +156,15 @@ public class CharacterController2D : MonoBehaviour
     Vector2 _movingPlatformVelocity;
 
     AirEffector _airEffector;
+
+    public float RaycastDistance => raycastDistance;
+    public LayerMask LayerMask => layerMask;
+    public bool IsSubmerged => isSubmerged;
+    public bool IsInWater => isInWater;
+    public GroundType GroundType => groundType;
+    public WallType LeftWallType => leftWallType;
+    public WallType RightWallType => rightWallType;
+    public GroundType CeilingType => ceilingType;
 
     // Start is called before the first frame update
     void Start()
