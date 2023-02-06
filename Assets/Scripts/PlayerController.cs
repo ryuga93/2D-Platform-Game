@@ -783,7 +783,7 @@ public class PlayerController : MonoBehaviour
 
         if (checkBelow)
         {
-            Vector2 raycastBelow = transform.position - new Vector3(0, _capsuleCollider.size.y * 0.5f);
+            Vector2 raycastBelow = transform.position - new Vector3(0, _capsuleCollider.size.y);
             RaycastHit2D hit = Physics2D.Raycast(raycastBelow, Vector2.down,
                             _characterController.RaycastDistance, _characterController.LayerMask);
 
@@ -810,7 +810,7 @@ public class PlayerController : MonoBehaviour
             canGroundSlam = false;
         }
 
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.5f);
 
         if (tempOneWayPlatform)
         {
