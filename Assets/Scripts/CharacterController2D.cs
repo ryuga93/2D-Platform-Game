@@ -261,6 +261,35 @@ public class CharacterController2D : MonoBehaviour
     void CheckOtherCollisions()
     {
         //left
+        Vector2 raycastLeftOrigin = _rigidbody.position - new Vector2(_capsuleCollider.size.x / 2, 0);
+        Vector2 raycastUpperLeft = raycastLeftOrigin + (Vector2.up * _capsuleCollider.size.y * 0.35f);
+        Vector2 raycastLowerLeft = raycastLeftOrigin + (Vector2.down * _capsuleCollider.size.y * 0.35f);
+
+        Debug.DrawRay(raycastUpperLeft, Vector2.left * raycastDistance, Color.green);
+        Debug.DrawRay(raycastLowerLeft, Vector2.left * raycastDistance, Color.green);
+
+        RaycastHit2D hitUpperLeft = Physics2D.Raycast(raycastUpperLeft, Vector2.left, raycastDistance, layerMask);
+        RaycastHit2D hitLowerLeft = Physics2D.Raycast(raycastLowerLeft, Vector2.left, raycastDistance, layerMask);
+
+        if (hitUpperLeft.collider && hitLowerLeft.collider)
+        {
+            leftWallType = DetermineWallType(hitLowerLeft.collider);
+            _isLeftExist = true;
+            leftWallEffector = hitLowerLeft.collider.GetComponent<WallEffector>();
+
+            if (leftWallEffector)
+            {
+                isLeftRunnable = leftWallEffector.IsRunnable;
+                isLeftJumpable = leftWallEffector.IsJumpable;
+                leftSlideModifier = leftWallEffector.WallSlideAmount;
+            }
+        }
+        else
+        {
+            leftWallType = WallType.None;
+            _isLeftExist = false;
+        }
+        /*
         RaycastHit2D leftHit = Physics2D.BoxCast(_capsuleCollider.bounds.center, _capsuleCollider.size * 0.7f,
                                 0f, Vector2.left, raycastDistance * 2, layerMask);
 
@@ -282,9 +311,38 @@ public class CharacterController2D : MonoBehaviour
         {
             _isLeftExist = false;
             leftWallType = WallType.None;
-        }
+        } */
 
         //right
+        Vector2 raycastRightOrigin = _rigidbody.position + new Vector2(_capsuleCollider.size.x / 2, 0f);
+        Vector2 raycastUpperRight = raycastRightOrigin + (Vector2.up * _capsuleCollider.size.y * 0.35f);
+        Vector2 raycastLowerRight = raycastRightOrigin + (Vector2.down * _capsuleCollider.size.y * 0.35f);
+
+        Debug.DrawRay(raycastUpperRight, Vector2.right * raycastDistance, Color.green);
+        Debug.DrawRay(raycastLowerRight, Vector2.right* raycastDistance, Color.green);
+
+        RaycastHit2D hitUpperRight = Physics2D.Raycast(raycastUpperRight, Vector2.right, raycastDistance, layerMask);
+        RaycastHit2D hitLowerRight = Physics2D.Raycast(raycastLowerRight, Vector2.right, raycastDistance, layerMask);
+
+        if (hitUpperRight.collider && hitLowerRight.collider)
+        {
+            rightWallType = DetermineWallType(hitLowerRight.collider);
+            _isRightExist = true;
+            rightWallEffector = hitLowerRight.collider.GetComponent<WallEffector>();
+
+            if (rightWallEffector)
+            {
+                isRightRunnable = rightWallEffector.IsRunnable;
+                isRightJumpable = rightWallEffector.IsJumpable;
+                rightSlideModifier = rightWallEffector.WallSlideAmount;
+            }
+        }
+        else
+        {
+            rightWallType = WallType.None;
+            _isRightExist = false;
+        }
+        /*
         RaycastHit2D rightHit = Physics2D.BoxCast(_capsuleCollider.bounds.center, _capsuleCollider.size * 0.7f,
                                 0f, Vector2.right, raycastDistance * 2, layerMask);
         
@@ -306,7 +364,7 @@ public class CharacterController2D : MonoBehaviour
         {
             _isRightExist = false;
             rightWallType = WallType.None;
-        }
+        } */
 
         //above
         RaycastHit2D aboveHit = Physics2D.CapsuleCast(_capsuleCollider.bounds.center, _capsuleCollider.size,
