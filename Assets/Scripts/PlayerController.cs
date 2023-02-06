@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float groundSlamSpeed = 60f;
     [SerializeField] float deadzoneValue = 0.15f;
     [SerializeField] float swimSpeed = 150f;
+    [SerializeField] float wallJumpDelay = 0.4f;
 
     [Header("Player States")]
     [SerializeField] bool isJumping;
@@ -87,6 +88,8 @@ public class PlayerController : MonoBehaviour
     float _jumpPadAmount = 15f;
     float _jumpPadAdjustment = 0f;
     Vector2 _tempVelocity;
+
+    bool _inAirControl = true;
 
     public Vector2 MoveDirection => _moveDirection;
     public bool IsGliding => isGliding;
@@ -155,7 +158,11 @@ public class PlayerController : MonoBehaviour
 
     private void ProcessHorizontalMovement()
     {
-        if (!isWallJumping)
+        if (!_inAirControl || (isWallJumping && _input.x == 0f))
+        {
+            return;
+        }
+        else
         {
             _moveDirection.x = _input.x;
 
@@ -468,11 +475,11 @@ public class PlayerController : MonoBehaviour
             {
                 _moveDirection.y = wallRunAmount;
 
-                if (_characterController.IsLeftExist)
+                if (_characterController.IsLeftExist && !isWallJumping)
                 {
                     transform.rotation = Quaternion.Euler(0f, 180f, 0f);
                 }
-                else if (_characterController.IsRightExist)
+                else if (_characterController.IsRightExist && !isWallJumping)
                 {
                     transform.rotation = Quaternion.Euler(0f, 0f, 0f);
                 }
@@ -723,8 +730,10 @@ public class PlayerController : MonoBehaviour
     IEnumerator WallJumpWaiter()
     {
         isWallJumping = true;
-        yield return new WaitForSeconds(0.4f);
-        isWallJumping = false;
+        _inAirControl = false;
+        yield return new WaitForSeconds(wallJumpDelay);
+        _inAirControl = true;
+        // isWallJumping = false;
     }
 
     IEnumerator WallRunWaiter()
