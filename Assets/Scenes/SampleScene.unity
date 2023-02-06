@@ -681,7 +681,7 @@ MonoBehaviour:
   m_Follow: {fileID: 1538337300}
   m_Lens:
     FieldOfView: 60
-    OrthographicSize: 4.18
+    OrthographicSize: 10
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -1087,7 +1087,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 4.18
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -3877,17 +3877,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c868bca6e132645edad9f3dc663b3a59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slopeNormal: {x: 0, y: 0}
-  slopeAngle: 0
   slopeAngleLimit: 45
   downForceAdjustment: 1.2
   waterForce: 250
-  isSubmerged: 0
-  isInWater: 0
   raycastDistance: 0.1
   layerMask:
     serializedVersion: 2
     m_Bits: 64
+  moveType: 2
+  isSubmerged: 0
+  isInWater: 0
   groundType: 0
   leftWallType: 0
   rightWallType: 0

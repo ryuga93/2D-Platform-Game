@@ -11,6 +11,7 @@ public class CharacterController2D : MonoBehaviour
     [SerializeField] float waterForce = 250f;
     [SerializeField] float raycastDistance = 0.2f;
     [SerializeField] LayerMask layerMask;
+    [SerializeField] CharacterControllerMoveType moveType = CharacterControllerMoveType.NonPhysicsBased;
     
     [Header("In Water Information")]
     [SerializeField] bool isSubmerged;
@@ -22,104 +23,28 @@ public class CharacterController2D : MonoBehaviour
     [SerializeField] WallType rightWallType;
     [SerializeField] GroundType ceilingType;
     
-
+    [Header("Jump Pad Information")]
     [SerializeField] float jumpPadAmount;
-    public float JumpPadAmount
-    {
-        get => jumpPadAmount;
-        set => jumpPadAmount = value;
-    }
-
     [SerializeField] float jumpPadUpperLimit;
-    public float JumpPadUpperLimit
-    {
-        get => jumpPadUpperLimit;
-        set => jumpPadUpperLimit = value;
-    }
-
-    [SerializeField] WallEffector leftWallEffector;
-    public WallEffector LeftWallEffector
-    {
-        get => leftWallEffector;
-        set => leftWallEffector = value;
-    }
-
-    [SerializeField] bool isLeftRunnable;
-    public bool IsLeftRunnable
-    {
-        get => isLeftRunnable;
-        set => isLeftRunnable = value;
-    }
-
-    [SerializeField] bool isLeftJumpable;
-    public bool IsLeftJumpable
-    {
-        get => isLeftJumpable;
-        set => isLeftJumpable = value;
-    }
-
-    [SerializeField] float leftSlideModifier;
-    public float LeftSlideModifier
-    {
-        get => leftSlideModifier;
-        set => leftSlideModifier = value;
-    }
-
-    [SerializeField] WallEffector rightWallEffector;
-    public WallEffector RightWallEffector
-    {
-        get => rightWallEffector;
-        set => rightWallEffector = value;
-    }
-
-    [SerializeField] bool isRightRunnable;
-    public bool IsRightRunnable
-    {
-        get => isRightRunnable;
-        set => isRightRunnable = value;
-    }
-
-    [SerializeField] bool isRightJumpable;
-    public bool IsRightJumpable
-    {
-        get => isRightJumpable;
-        set => isRightJumpable = value;
-    }
-
-    [SerializeField] float rightSlideModifier;
-    public float RightSlideModifier
-    {
-        get => rightSlideModifier;
-        set => rightSlideModifier = value;
-    }
-
-    [SerializeField] bool isInAirEffector;
-    public bool IsInAirEffector
-    {
-        get => isInAirEffector;
-        set => isInAirEffector = value;
-    }
     
+    [Header("Left Wall Effector Information")]
+    [SerializeField] WallEffector leftWallEffector;
+    [SerializeField] bool isLeftRunnable;
+    [SerializeField] bool isLeftJumpable;
+    [SerializeField] float leftSlideModifier;
+
+    [Header("Right Wall Effector Information")]
+    [SerializeField] WallEffector rightWallEffector;
+    [SerializeField] bool isRightRunnable;
+    [SerializeField] bool isRightJumpable;
+    [SerializeField] float rightSlideModifier;
+    
+    [Header("Air Effector Information")]
+    [SerializeField] bool isInAirEffector;
     [SerializeField] AirEffectorType airEffectorType;
-    public AirEffectorType AirEffectorType
-    {
-        get => airEffectorType;
-        set => airEffectorType = value;
-    }
-
     [SerializeField] float airEffectorSpeed;
-    public float AirEffectorSpeed
-    {
-        get => airEffectorSpeed;
-        set => airEffectorSpeed = value;
-    }
-
     [SerializeField] Vector2 airEffectorDirection;
-    public Vector2 AirEffectorDirection
-    {
-        get => airEffectorDirection;
-        set => airEffectorDirection = value;
-    }
+    
 
     // flags
     bool _disableGroundCheck;
@@ -131,14 +56,8 @@ public class CharacterController2D : MonoBehaviour
     bool _isAboveExist;
     bool _hitGroundThisFrame;
     bool _hitWallThisFrame;
-    public bool IsBelowExist => _isBelowExist;
-    public bool IsLeftExist => _isLeftExist;
-    public bool IsRightExist => _isRightExist;
-    public bool IsAboveExist => _isAboveExist;
-    public bool HitGroundThisFrame => _hitGroundThisFrame;
-    public bool HitWallThisFrame => _hitWallThisFrame;
-
-
+    
+    // Private Variables
     Vector2 slopeNormal;
     float slopeAngle;
 
@@ -157,6 +76,13 @@ public class CharacterController2D : MonoBehaviour
 
     AirEffector _airEffector;
 
+    #region Getters
+    public bool IsBelowExist => _isBelowExist;
+    public bool IsLeftExist => _isLeftExist;
+    public bool IsRightExist => _isRightExist;
+    public bool IsAboveExist => _isAboveExist;
+    public bool HitGroundThisFrame => _hitGroundThisFrame;
+    public bool HitWallThisFrame => _hitWallThisFrame;
     public float RaycastDistance => raycastDistance;
     public LayerMask LayerMask => layerMask;
     public bool IsSubmerged => isSubmerged;
@@ -165,6 +91,21 @@ public class CharacterController2D : MonoBehaviour
     public WallType LeftWallType => leftWallType;
     public WallType RightWallType => rightWallType;
     public GroundType CeilingType => ceilingType;
+    public float JumpPadAmount => jumpPadAmount;
+    public float JumpPadUpperLimit => jumpPadUpperLimit;
+    public WallEffector LeftWallEffector => leftWallEffector;
+    public WallEffector RightWallEffector => rightWallEffector;
+    public bool IsLeftRunnable => isLeftRunnable;
+    public bool IsLeftJumpable => isLeftJumpable;
+    public float LeftSlideModifier => leftSlideModifier;
+    public bool IsRightRunnable => isRightRunnable;
+    public bool IsRightJumpable => isRightJumpable;
+    public float RightSlideModifier => rightSlideModifier;
+    public bool IsInAirEffector => isInAirEffector;
+    public AirEffectorType AirEffectorType => airEffectorType;
+    public float AirEffectorSpeed => airEffectorSpeed;
+    public Vector2 AirEffectorDirection => airEffectorDirection;
+    #endregion
 
     // Start is called before the first frame update
     void Start()
@@ -221,12 +162,12 @@ public class CharacterController2D : MonoBehaviour
             _moveAmount = Vector2.Lerp(_moveAmount, airEffectorVector, Time.deltaTime);
         }
 
-        if (!isInWater)
+        if (moveType.Equals(CharacterControllerMoveType.NonPhysicsBased))
         {
             _currentPosition = _lastPosition + _moveAmount;
             _rigidbody.MovePosition(_currentPosition);
         }
-        else
+        else if (moveType.Equals(CharacterControllerMoveType.PhysicsBased))
         {
             if (_rigidbody.velocity.magnitude < 10f)
             {
@@ -523,6 +464,7 @@ public class CharacterController2D : MonoBehaviour
         if (other.gameObject.GetComponent<BuoyancyEffector2D>())
         {
             isInWater = true;
+            moveType = CharacterControllerMoveType.PhysicsBased;
         }
 
         if (other.gameObject.GetComponent<AirEffector>())
@@ -563,6 +505,7 @@ public class CharacterController2D : MonoBehaviour
         {
             _rigidbody.velocity = Vector2.zero;
             isInWater = false;
+            moveType = CharacterControllerMoveType.NonPhysicsBased;
         }
 
         if (other.gameObject.GetComponent<AirEffector>())
