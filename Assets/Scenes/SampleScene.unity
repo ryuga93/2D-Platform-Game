@@ -3819,25 +3819,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a875fad7db9a4a22910d9f14fb526af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 15
-  creepSpeed: 8
-  gravity: 40
-  jumpSpeed: 15
-  doubleJumpSpeed: 10
-  xWallJumpSpeed: 15
-  yWallJumpSpeed: 15
-  wallRunAmount: 8
-  wallSlideAmount: 0.2
-  glideTime: 2
-  glideDecendAmount: 2
-  powerJumpSpeed: 40
-  powerJumpWaitTime: 1.5
-  dashSpeed: 40
-  dashTime: 0.2
-  dashCooldownTime: 1
-  groundSlamSpeed: 60
-  deadzoneValue: 0.15
-  swimSpeed: 150
+  profile: {fileID: 11400000, guid: 9b4eab1c71ec84a69b8f2ab8366b08c8, type: 2}
   isJumping: 0
   isDoubleJumping: 0
   isTripleJumping: 0
@@ -3851,20 +3833,6 @@ MonoBehaviour:
   isDashing: 0
   isGroundSlamming: 0
   isSwimming: 0
-  canDoubleJump: 1
-  canTripleJump: 1
-  canWallJump: 1
-  canJumpAfterWallJump: 0
-  canWallRun: 1
-  canMultipleWallRun: 0
-  canWallSlide: 1
-  canGlide: 1
-  canGlideAfterWallContact: 0
-  canPowerJump: 1
-  canGroundDash: 1
-  canAirDash: 1
-  canGroundSlam: 0
-  canSwim: 1
 --- !u!114 &1538337305
 MonoBehaviour:
   m_ObjectHideFlags: 0

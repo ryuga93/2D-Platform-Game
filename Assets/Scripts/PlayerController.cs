@@ -7,29 +7,9 @@ using System;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] PlayerProfile profile;
+    
     //player properties
-    [Header("Player Properties")]
-    [SerializeField] float walkSpeed = 10f;
-    [SerializeField] float creepSpeed = 5f;
-    [SerializeField] float gravity = 20f;
-    [SerializeField] float jumpSpeed = 15f;
-    [SerializeField] float doubleJumpSpeed = 10f;
-    [SerializeField] float xWallJumpSpeed = 15f;
-    [SerializeField] float yWallJumpSpeed = 15f;
-    [SerializeField] float wallRunAmount = 8f;
-    [SerializeField] float wallSlideAmount = 0.1f;
-    [SerializeField] float glideTime = 2f;
-    [SerializeField] float glideDecendAmount = 2f;
-    [SerializeField] float powerJumpSpeed = 40f;
-    [SerializeField] float powerJumpWaitTime = 1.5f;
-    [SerializeField] float dashSpeed = 20f;
-    [SerializeField] float dashTime = 0.2f;
-    [SerializeField] float dashCooldownTime = 1f;
-    [SerializeField] float groundSlamSpeed = 60f;
-    [SerializeField] float deadzoneValue = 0.15f;
-    [SerializeField] float swimSpeed = 150f;
-    [SerializeField] float wallJumpDelay = 0.4f;
-
     [Header("Player States")]
     [SerializeField] bool isJumping;
     [SerializeField] bool isDoubleJumping;
@@ -44,23 +24,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool isDashing;
     [SerializeField] bool isGroundSlamming;
     [SerializeField] bool isSwimming;
-
-    [Header("Player Abilities")]
-    //abilities toggle flags
-    [SerializeField] bool canDoubleJump;
-    [SerializeField] bool canTripleJump;
-    [SerializeField] bool canWallJump;
-    [SerializeField] bool canJumpAfterWallJump;
-    [SerializeField] bool canWallRun;
-    [SerializeField] bool canMultipleWallRun;
-    [SerializeField] bool canWallSlide;
-    [SerializeField] bool canGlide;
-    [SerializeField] bool canGlideAfterWallContact;
-    [SerializeField] bool canPowerJump;
-    [SerializeField] bool canGroundDash;
-    [SerializeField] bool canAirDash;
-    [SerializeField] bool canGroundSlam;
-    [SerializeField] bool canSwim;
 
     //input flags
     bool _startJump;
@@ -143,12 +106,12 @@ public class PlayerController : MonoBehaviour
 
     private void ApplyDeadzones()
     {
-        if (_input.x > -deadzoneValue && _input.x < deadzoneValue)
+        if (_input.x > -profile.deadzoneValue && _input.x < profile.deadzoneValue)
         {
             _input.x = 0f;
         }
 
-        if (_input.y > -deadzoneValue && _input.y < deadzoneValue)
+        if (_input.y > -profile.deadzoneValue && _input.y < profile.deadzoneValue)
         {
             _input.y = 0f;
         }
@@ -177,22 +140,22 @@ public class PlayerController : MonoBehaviour
             {
                 if (transform.rotation.y == 0)
                 {
-                    _moveDirection.x = dashSpeed;
+                    _moveDirection.x = profile.dashSpeed;
                 }
                 else
                 {
-                    _moveDirection.x = -dashSpeed;
+                    _moveDirection.x = -profile.dashSpeed;
                 }
 
                 _moveDirection.y = 0f;
             }
             else if (isCreeping)
             {
-                _moveDirection.x *= creepSpeed;
+                _moveDirection.x *= profile.creepSpeed;
             }
             else 
             {
-                _moveDirection.x *= walkSpeed;
+                _moveDirection.x *= profile.walkSpeed;
             }
         }
     }
@@ -314,10 +277,10 @@ public class PlayerController : MonoBehaviour
         {
             _startJump = false;
 
-            if (canPowerJump && isDucking && _characterController.GroundType != GroundType.OneWayPlatform && _powerJumpTimer > powerJumpWaitTime)
+            if (profile.canPowerJump && isDucking && _characterController.GroundType != GroundType.OneWayPlatform && _powerJumpTimer > profile.powerJumpWaitTime)
             {
                 OnPowerJump?.Invoke(this, EventArgs.Empty);
-                _moveDirection.y = powerJumpSpeed;
+                _moveDirection.y = profile.powerJumpSpeed;
                 StartCoroutine(PowerJumpWaiter());
             }
             // Check One Way Platform
@@ -327,7 +290,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                _moveDirection.y = jumpSpeed;
+                _moveDirection.y = profile.jumpSpeed;
             }
 
             isJumping = true;
@@ -396,7 +359,7 @@ public class PlayerController : MonoBehaviour
         ClearGroundAbilityFlags();
         AirJump();
 
-        if (_input.y != 0f && canSwim && !_isHoldJump)
+        if (_input.y != 0f && profile.canSwim && !_isHoldJump)
         {
             if (_input.y > 0 && !_characterController.IsSubmerged)
             {
@@ -404,7 +367,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                _moveDirection.y = (_input.y * swimSpeed) * Time.deltaTime;
+                _moveDirection.y = (_input.y * profile.swimSpeed) * Time.deltaTime;
             }
         }
         else if (_moveDirection.y < 0f && _input.y == 0f)
@@ -412,7 +375,7 @@ public class PlayerController : MonoBehaviour
             _moveDirection.y += 2f;
         }
 
-        if (_characterController.IsSubmerged && canSwim)
+        if (_characterController.IsSubmerged && profile.canSwim)
         {
             isSwimming = true;
         }
@@ -431,7 +394,7 @@ public class PlayerController : MonoBehaviour
         isWallSliding = false;
         isGroundSlamming = false;
         _startGlide = true;
-        _currentGlideTime = glideTime;
+        _currentGlideTime = profile.glideTime;
         isGliding = false;
     }
 
@@ -458,7 +421,7 @@ public class PlayerController : MonoBehaviour
             ClearAirAbilitiesFlags();
         }
         // Wall Run
-        if (canWallRun && (_characterController.IsLeftExist || _characterController.IsRightExist))
+        if (profile.canWallRun && (_characterController.IsLeftExist || _characterController.IsRightExist))
         {
             // isGliding = false;
             if (_characterController.IsLeftExist && _characterController.LeftWallEffector && !_characterController.IsLeftRunnable)
@@ -472,7 +435,7 @@ public class PlayerController : MonoBehaviour
 
             if (_input.y > 0 && _ableToWallRun)
             {
-                _moveDirection.y = wallRunAmount;
+                _moveDirection.y = profile.wallRunAmount;
 
                 if (_characterController.IsLeftExist && !isWallJumping)
                 {
@@ -488,7 +451,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (canMultipleWallRun)
+            if (profile.canMultipleWallRun)
             {
                 StopCoroutine(WallRunWaiter());
                 _ableToWallRun = true;
@@ -496,11 +459,11 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if ((_characterController.IsLeftExist || _characterController.IsRightExist) && canWallRun)
+        if ((_characterController.IsLeftExist || _characterController.IsRightExist) && profile.canWallRun)
         {
-            if (canGlideAfterWallContact)
+            if (profile.canGlideAfterWallContact)
             {
-                _currentGlideTime = glideTime;
+                _currentGlideTime = profile.glideTime;
             }
             else
             {
@@ -521,23 +484,23 @@ public class PlayerController : MonoBehaviour
         if (_startJump)
         {
             // Triple Jump
-            if (canTripleJump && !_characterController.IsLeftExist && !_characterController.IsRightExist)
+            if (profile.canTripleJump && !_characterController.IsLeftExist && !_characterController.IsRightExist)
             {
                 if (isDoubleJumping && !isTripleJumping)
                 {
                     OnDoubleJump?.Invoke(this, EventArgs.Empty);
-                    _moveDirection.y = doubleJumpSpeed;
+                    _moveDirection.y = profile.doubleJumpSpeed;
                     isTripleJumping = true;
                 }
             }
 
             // Double Jump
-            if (canDoubleJump && !_characterController.IsLeftExist && !_characterController.IsRightExist)
+            if (profile.canDoubleJump && !_characterController.IsLeftExist && !_characterController.IsRightExist)
             {
                 if (!isDoubleJumping)
                 {
                     OnDoubleJump?.Invoke(this, EventArgs.Empty);
-                    _moveDirection.y = doubleJumpSpeed;
+                    _moveDirection.y = profile.doubleJumpSpeed;
                     isDoubleJumping = true;
                 }
             }
@@ -547,11 +510,11 @@ public class PlayerController : MonoBehaviour
             {
                 isDoubleJumping = false;
                 isTripleJumping = false;
-                _moveDirection.y = jumpSpeed;
+                _moveDirection.y = profile.jumpSpeed;
             }
 
             // Wall Jump
-            if (canWallJump && (_characterController.IsLeftExist || _characterController.IsRightExist))
+            if (profile.canWallJump && (_characterController.IsLeftExist || _characterController.IsRightExist))
             {
                 if (_characterController.IsLeftExist && _characterController.LeftWallEffector && !_characterController.IsLeftJumpable)
                 {
@@ -564,22 +527,22 @@ public class PlayerController : MonoBehaviour
 
                 if (_moveDirection.x <= 0 && _characterController.IsLeftExist)
                 {
-                    _moveDirection.x = xWallJumpSpeed;
-                    _moveDirection.y = yWallJumpSpeed;
+                    _moveDirection.x = profile.xWallJumpSpeed;
+                    _moveDirection.y = profile.yWallJumpSpeed;
 
                     transform.rotation = Quaternion.Euler(0f, 0f, 0f);
                 }
                 else if (_moveDirection.x >= 0 && _characterController.IsRightExist)
                 {
-                    _moveDirection.x = -xWallJumpSpeed;
-                    _moveDirection.y = yWallJumpSpeed;
+                    _moveDirection.x = -profile.xWallJumpSpeed;
+                    _moveDirection.y = profile.yWallJumpSpeed;
 
                     transform.rotation = Quaternion.Euler(0f, 180f, 0f);
                 }
 
                 StartCoroutine(WallJumpWaiter());
 
-                if (canJumpAfterWallJump)
+                if (profile.canJumpAfterWallJump)
                 {
                     isDoubleJumping = false;
                     isTripleJumping = false;
@@ -616,7 +579,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // Apply wall slide adjustments
-        if (canWallSlide && (_characterController.IsLeftExist || _characterController.IsRightExist))
+        if (profile.canWallSlide && (_characterController.IsLeftExist || _characterController.IsRightExist))
         {   
             if (_characterController.HitWallThisFrame)
             {
@@ -627,26 +590,26 @@ public class PlayerController : MonoBehaviour
             {
                 if (_characterController.IsLeftExist && _characterController.LeftWallEffector)
                 {
-                    _moveDirection.y -= (gravity * _characterController.LeftSlideModifier) * Time.deltaTime;
+                    _moveDirection.y -= (profile.gravity * _characterController.LeftSlideModifier) * Time.deltaTime;
                 }
                 else if (_characterController.IsRightExist && _characterController.RightWallEffector)
                 {
-                    _moveDirection.y -= (gravity * _characterController.RightSlideModifier) * Time.deltaTime;
+                    _moveDirection.y -= (profile.gravity * _characterController.RightSlideModifier) * Time.deltaTime;
                 }
                 else
                 {
-                    _moveDirection.y -= (gravity * wallSlideAmount) * Time.deltaTime;
+                    _moveDirection.y -= (profile.gravity * profile.wallSlideAmount) * Time.deltaTime;
                 }
 
                 isWallSliding = true;
             }
             else
             {
-                _moveDirection.y -= gravity * Time.deltaTime;
+                _moveDirection.y -= profile.gravity * Time.deltaTime;
                 isWallSliding = false;
             } 
         }
-        else if (canGlide && _input.y > 0f && _moveDirection.y < 0.2f) // Glide adjustment
+        else if (profile.canGlide && _input.y > 0f && _moveDirection.y < 0.2f) // Glide adjustment
         {
             if (_currentGlideTime > 0f)
             {
@@ -658,24 +621,24 @@ public class PlayerController : MonoBehaviour
                     _startGlide = false;
                 }
 
-                _moveDirection.y -= glideDecendAmount * Time.deltaTime;
+                _moveDirection.y -= profile.glideDecendAmount * Time.deltaTime;
                 _currentGlideTime -= Time.deltaTime;
             }
             else
             {
                 isGliding = false;
-                _moveDirection.y -= gravity * Time.deltaTime;
+                _moveDirection.y -= profile.gravity * Time.deltaTime;
             }
         }
         //else if (canGroundSlam && !isPowerJumping && _input.y < 0f && _moveDirection.y < 0f) // Ground slam
         else if (isGroundSlamming && !isPowerJumping && _moveDirection.y < 0f)
         {
             OnStomp?.Invoke(this, EventArgs.Empty);
-            _moveDirection.y = -groundSlamSpeed;
+            _moveDirection.y = -profile.groundSlamSpeed;
         }
         else if (!isDashing) // Regular gravity
         {
-            _moveDirection.y -= gravity * Time.deltaTime; 
+            _moveDirection.y -= profile.gravity * Time.deltaTime; 
             isWallSliding = false;
         } 
     }
@@ -706,7 +669,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.started && _dashTimer <= 0)
         {
-            if ((canAirDash && !_characterController.IsBelowExist) || (canGroundDash && _characterController.IsBelowExist))
+            if ((profile.canAirDash && !_characterController.IsBelowExist) || (profile.canGroundDash && _characterController.IsBelowExist))
             {
                 StartCoroutine(Dash());
             }
@@ -717,7 +680,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed && _input.y < 0f)
         {
-            if (canGroundSlam)
+            if (profile.canGroundSlam)
             {
                 isGroundSlamming = true;
             }
@@ -730,7 +693,7 @@ public class PlayerController : MonoBehaviour
     {
         isWallJumping = true;
         _inAirControl = false;
-        yield return new WaitForSeconds(wallJumpDelay);
+        yield return new WaitForSeconds(profile.wallJumpDelay);
         _inAirControl = true;
         // isWallJumping = false;
     }
@@ -778,15 +741,15 @@ public class PlayerController : MonoBehaviour
     {
         OnStartDash?.Invoke(this, EventArgs.Empty);
         isDashing = true;
-        yield return new WaitForSeconds(dashTime);
+        yield return new WaitForSeconds(profile.dashTime);
 
         isDashing = false;
-        _dashTimer = dashCooldownTime;
+        _dashTimer = profile.dashCooldownTime;
     }
 
     IEnumerator DisableOneWayPlatform(bool checkBelow)
     {
-        bool originalCanGroundSlam = canGroundSlam;
+        bool originalCanGroundSlam = profile.canGroundSlam;
         GameObject tempOneWayPlatform = null;
 
         if (checkBelow)
@@ -815,7 +778,7 @@ public class PlayerController : MonoBehaviour
         if (tempOneWayPlatform)
         {
             tempOneWayPlatform.GetComponent<EdgeCollider2D>().enabled = false;
-            canGroundSlam = false;
+            profile.canGroundSlam = false;
         }
 
         yield return new WaitForSeconds(0.5f);
@@ -823,7 +786,7 @@ public class PlayerController : MonoBehaviour
         if (tempOneWayPlatform)
         {
             tempOneWayPlatform.GetComponent<EdgeCollider2D>().enabled = true;
-            canGroundSlam = originalCanGroundSlam;
+            profile.canGroundSlam = originalCanGroundSlam;
         }
     }
     //#endregion
