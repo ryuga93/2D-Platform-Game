@@ -135,14 +135,15 @@ public class CharacterController2D : MonoBehaviour
         // Moving Platform adjustment
         if (groundType == GroundType.MovingPlatform)
         {
+            Vector2 platformVelocity = GetMovingPlatformVelocity();
             // Offset player movement on X with Moving Platform's velocity
-            _moveAmount.x += GetMovingPlatformVelocity().x;
+            _moveAmount.x += platformVelocity.x;
             // If platform is moving down
-            if (GetMovingPlatformVelocity().y < 0f)
+            if (platformVelocity.y < 0f)
             {
                 // Offset player movement on the Y
-                _moveAmount.y += GetMovingPlatformVelocity().y;
-                _moveAmount.y *= (downForceAdjustment + 0.5f);
+                _moveAmount.y += platformVelocity.y;
+                //_moveAmount.y *= (downForceAdjustment + 0.5f);
             }       
         }
 
@@ -151,7 +152,11 @@ public class CharacterController2D : MonoBehaviour
             if (GetMovingPlatformVelocity().y < 0f)
             {
                 _moveAmount.y += GetMovingPlatformVelocity().y;
-                _moveAmount.y *= (downForceAdjustment * 4);
+
+                if (!_disableGroundCheck && _isBelowExist)
+                {
+                    _moveAmount.y *= (downForceAdjustment * 4);
+                }
             }
         }
 
@@ -223,7 +228,10 @@ public class CharacterController2D : MonoBehaviour
 
                 if (groundType == GroundType.CollapsablePlatform)
                 {
-                    _tempMovingPlatform.GetComponent<CollapsablePlatform>().CollapsePlatform();
+                    if (_tempMovingPlatform.TryGetComponent<CollapsablePlatform>(out CollapsablePlatform cp))
+                    {
+                        cp.CollapsePlatform();
+                    }
                 }
             }
 
@@ -497,13 +505,27 @@ public class CharacterController2D : MonoBehaviour
     {
         if (_tempMovingPlatform && groundType == GroundType.MovingPlatform)
         {
-            _movingPlatformVelocity = _tempMovingPlatform.GetComponent<MovingPlatform>().Difference;
-            return _movingPlatformVelocity;
+            if (_tempMovingPlatform.TryGetComponent<MovingPlatform>(out MovingPlatform mp))
+            {
+                _movingPlatformVelocity = mp.Difference;
+                return _movingPlatformVelocity;
+            }
+            else
+            {
+                return Vector2.zero;
+            }
         }
         else if (_tempMovingPlatform && groundType == GroundType.CollapsablePlatform)
         {
-            _movingPlatformVelocity = _tempMovingPlatform.GetComponent<CollapsablePlatform>().Difference;
-            return _movingPlatformVelocity;
+            if (_tempMovingPlatform.TryGetComponent<CollapsablePlatform>(out CollapsablePlatform cp))
+            {
+                _movingPlatformVelocity = cp.Difference;
+                return _movingPlatformVelocity;
+            }
+            else
+            {
+                return Vector2.zero;
+            }
         }
         
         return Vector2.zero;

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e31f6899a7d8403cb0dcd8924c2ddf8, type: 3}
   m_Name: PlayerProfile_Default
   m_EditorClassIdentifier: 
-  walkSpeed: 10
+  walkSpeed: 20
   creepSpeed: 5
-  gravity: 20
-  jumpSpeed: 15
+  gravity: 40
+  jumpSpeed: 20
   doubleJumpSpeed: 10
   xWallJumpSpeed: 15
   yWallJumpSpeed: 15
@@ -25,7 +25,7 @@ MonoBehaviour:
   glideDecendAmount: 2
   powerJumpSpeed: 40
   powerJumpWaitTime: 1.5
-  dashSpeed: 20
+  dashSpeed: 40
   dashTime: 0.2
   dashCooldownTime: 1
   groundSlamSpeed: 60
