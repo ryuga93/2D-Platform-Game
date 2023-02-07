@@ -25,8 +25,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool isGroundSlamming;
     [SerializeField] bool isSwimming;
 
-    [SerializeField] float _tempMoveSpeed;
-
     //input flags
     bool _startJump;
     bool _releaseJump;
@@ -53,6 +51,11 @@ public class PlayerController : MonoBehaviour
     Vector2 _tempVelocity;
 
     bool _inAirControl = true;
+
+    float _tempMoveSpeed;
+
+    float _coyoteTimeCounter;
+    float _jumpBufferCounter;
 
     public Vector2 MoveDirection => _moveDirection;
     public bool IsGliding => isGliding;
@@ -85,6 +88,15 @@ public class PlayerController : MonoBehaviour
         ApplyDeadzones();
         
         ProcessHorizontalMovement();
+
+        if (_startJump)
+        {
+            _jumpBufferCounter = profile.jumpBufferTime;
+        }
+        else
+        {
+            _jumpBufferCounter -= Time.deltaTime;
+        }
 
         if (_characterController.IsBelowExist)
         {
@@ -135,7 +147,7 @@ public class PlayerController : MonoBehaviour
             {
                 _tempMoveSpeed = Mathf.Lerp(_tempMoveSpeed, 0f, profile.decelerationAmount);
             }
-            
+
             _moveDirection.x = _tempMoveSpeed;
 
             if (_moveDirection.x < 0)
@@ -173,6 +185,8 @@ public class PlayerController : MonoBehaviour
 
     void OnGround()
     {
+        _coyoteTimeCounter = profile.coyoteTime;
+
         if (_characterController.AirEffectorType == AirEffectorType.Ladder)
         {
             InAirEffector();
@@ -271,7 +285,7 @@ public class PlayerController : MonoBehaviour
             _powerJumpTimer = 0f;
         }
 
-        if (isDucking && _moveDirection.x != 0)
+        if (isDucking && (_moveDirection.x <= Mathf.Epsilon && _moveDirection.x >= -Mathf.Epsilon))
         {
             isCreeping = true;
             _powerJumpTimer = 0f;
@@ -284,9 +298,10 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (_startJump) // On the ground
+        if (_jumpBufferCounter > 0f) // On the ground
         {
             _startJump = false;
+            _coyoteTimeCounter = 0f;
 
             if (profile.canPowerJump && isDucking && _characterController.GroundType != GroundType.OneWayPlatform && _powerJumpTimer > profile.powerJumpWaitTime)
             {
@@ -411,6 +426,12 @@ public class PlayerController : MonoBehaviour
 
     void InAir()
     {
+        if (_coyoteTimeCounter > 0f)
+        {
+            Jump();
+            _coyoteTimeCounter -= Time.deltaTime;
+        }
+
         ClearGroundAbilityFlags();
 
         AirJump();

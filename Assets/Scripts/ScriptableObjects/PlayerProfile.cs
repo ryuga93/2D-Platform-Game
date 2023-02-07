@@ -28,6 +28,8 @@ public class PlayerProfile : ScriptableObject
     public float deadzoneValue = 0.15f;
     public float swimSpeed = 150f;
     public float wallJumpDelay = 0.4f;
+    public float coyoteTime = 0.2f;
+    public float jumpBufferTime = 0.2f;
 
     [Header("Player Abilities")]
     //abilities toggle flags
