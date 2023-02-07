@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool isGroundSlamming;
     [SerializeField] bool isSwimming;
 
+    [SerializeField] float _tempMoveSpeed;
+
     //input flags
     bool _startJump;
     bool _releaseJump;
@@ -125,7 +127,16 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            _moveDirection.x = _input.x;
+            if (_input.x != 0f)
+            {
+                _tempMoveSpeed = Mathf.Lerp(_tempMoveSpeed, _input.x, profile.accelerationAmount);
+            }
+            else
+            {
+                _tempMoveSpeed = Mathf.Lerp(_tempMoveSpeed, 0f, profile.decelerationAmount);
+            }
+            
+            _moveDirection.x = _tempMoveSpeed;
 
             if (_moveDirection.x < 0)
             {
