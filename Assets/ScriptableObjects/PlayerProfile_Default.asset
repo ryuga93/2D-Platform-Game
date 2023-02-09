@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: PlayerProfile_Default
   m_EditorClassIdentifier: 
   walkSpeed: 20
+  accelerationAmount: 0.05
+  decelerationAmount: 0.4
   creepSpeed: 5
   gravity: 40
   jumpSpeed: 20
@@ -32,8 +34,10 @@ MonoBehaviour:
   deadzoneValue: 0.15
   swimSpeed: 150
   wallJumpDelay: 0.4
-  canDoubleJump: 1
-  canTripleJump: 1
+  coyoteTime: 0.2
+  jumpBufferTime: 0.2
+  canDoubleJump: 0
+  canTripleJump: 0
   canWallJump: 1
   canJumpAfterWallJump: 1
   canWallRun: 1
